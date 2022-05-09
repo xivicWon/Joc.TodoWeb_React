@@ -10,7 +10,12 @@ class AddTodo extends React.Component{
     }
 
     onButtonClick = () => { 
-        this.addTodoItem(this.state.item)
+        const {title} = this.state.item;
+        if( title.trim() === ''){
+            alert('Todo 제목을 입력해 주세요')
+        } else {
+            this.addTodoItem(this.state.item)
+        }
         this.setState({item:{title : ""}})
     }
 
@@ -21,7 +26,7 @@ class AddTodo extends React.Component{
     }
 
     onEnterPress = e =>{
-        const key = e.key  || e.keyCode;
+        const key = e.key || e.keyCode;
         if( key === "Enter" || key === 13){
             this.onButtonClick();
         }
@@ -30,7 +35,7 @@ class AddTodo extends React.Component{
     render(){
         const {item} = this.state;
         return (
-            <Paper style={{margin : 16, padding :16 }}>
+            <Paper style={{margin : 16, padding :16 }} elevation={20}>
                 <Grid container>
                     <Grid xs={11} md={11} item style={{paddingRight:16}} >
                         <TextField 

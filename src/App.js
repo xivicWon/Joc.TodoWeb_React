@@ -12,32 +12,27 @@ class App extends React.Component {
         super(props)
         this.state = { 
             items :  [
-                { id : 1 , done : false , title : 'sample' },
-                { id : 2 , done : true , title : 'sample2' },
-                { id : 3 , done : true , title : 'sample2' },
+                { idx : 1 , done : false , title : 'sample' },
+                { idx : 2 , done : true , title : 'sample2' },
+                { idx : 3 , done : true , title : 'sample3' },
             ] 
         }
     }
 
     addTodoItem = (item) =>{
-        if( item.title.trim() === ''){
-            alert('Todo 제목을 입력해 주세요')
-        } else {
-            const thisItems = this.state.items;
-            const newitem =  {
-                id : thisItems.length + 1,
-                title : item.title,
-                done : false
-            }
-            thisItems.push(newitem)
-            this.setState({items : thisItems})
+        const thisItems = this.state.items;
+        const newitem =  {
+            idx : thisItems.length + 1,
+            title : item.title,
+            done : false
         }
+        thisItems.push(newitem)
+        this.setState({items : thisItems})
     }
 
     editTodoItem = (item) => { 
-        console.log(item)
         const thisItems = this.state.items;
-        thisItems.filter((v)=> item.id === v.id )
+        thisItems.filter((v)=> item.idx === v.idx )
             .forEach(v => { 
                 v.title = item.title
                 v.done = item.done
@@ -46,6 +41,28 @@ class App extends React.Component {
         this.setState({items : thisItems});
     }
 
+    removeTodoItem = (item) =>{
+        const thisItems = this.state.items;
+        console.log("old",thisItems)
+        const newItems = thisItems.filter((v)=> item.idx !== v.idx )
+        console.log("new",newItems)
+        this.setState({items : newItems}, ()=>{
+        });
+    }
+
+    componentDidMount() {
+        console.log("App","componentDidMount")   
+    }
+    componentDidUpdate(prevProps, prevState, snapshot){
+        console.log("App","componentDidUpdate")   
+    }
+    shouldComponentUpdate(nextProps, nextState, nextContext ){
+        console.log("App","shouldComponentUpdate")   
+        return true;
+    }
+    componentWillUnmount(){
+        console.log("App","componentWillUnmount")   
+    }
     render() {
         // JSX -> 표준 JS (Babel -> Transfiling )
         // Webpack -> 모듈 Bundling
@@ -64,15 +81,19 @@ class App extends React.Component {
         //     .map((item , i)=><Todo item={item} key={i}></Todo>) 
         
         const {items} = this.state;
+        console.log("App Render", items)
         return (
             <div className='App'>
                 <Container maxWidth="md">
                     <AddTodo addTodoItem={this.addTodoItem}></AddTodo>
                     <div className='TodoList'>
-                        <Paper style={{margin:16}}>
+                        <Paper style={{margin:16}} elevation={20}>
                             <List>
                                 {items.map( (item , i ) => 
-                                    <Todo item={item} editTodoItem={this.editTodoItem} key={i}></Todo>
+                                    <Todo item={item} 
+                                        editTodoItem={this.editTodoItem} 
+                                        removeTodoItem={this.removeTodoItem}
+                                        key={i}></Todo>
                                 )}
                             </List>
                         </Paper>
