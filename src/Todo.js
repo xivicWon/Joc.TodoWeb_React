@@ -39,7 +39,7 @@ class Todo extends React.Component{
         const {item} = this.props;
         item.done = !item.done
         this.editTodoItem(item);
-    } 
+    }
 
     onDeleteTodo = e =>{
         const {item} = this.props;
@@ -61,7 +61,7 @@ class Todo extends React.Component{
     render(){
         const {item} = this.props;
         const {readOnly} = this.state;
-        const checkboxId = "todo-" + item.idx
+        const checkboxId = "todo-" + item.id
         return (
             <ListItem>
                 <ListItemButton>

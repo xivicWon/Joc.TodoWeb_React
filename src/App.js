@@ -12,9 +12,9 @@ class App extends React.Component {
         super(props)
         this.state = { 
             items :  [
-                { idx : 1 , done : false , title : 'sample' },
-                { idx : 2 , done : true , title : 'sample2' },
-                { idx : 3 , done : true , title : 'sample3' },
+                // { idx : 1 , done : false , title : 'sample' },
+                // { idx : 2 , done : true , title : 'sample2' },
+                // { idx : 3 , done : true , title : 'sample3' },
             ] 
         }
     }
@@ -22,7 +22,7 @@ class App extends React.Component {
     addTodoItem = (item) =>{
         const thisItems = this.state.items;
         const newitem =  {
-            idx : thisItems.length + 1,
+            id : thisItems.length + 1,
             title : item.title,
             done : false
         }
@@ -32,7 +32,7 @@ class App extends React.Component {
 
     editTodoItem = (item) => { 
         const thisItems = this.state.items;
-        thisItems.filter((v)=> item.idx === v.idx )
+        thisItems.filter((v)=> item.id === v.id )
             .forEach(v => { 
                 v.title = item.title
                 v.done = item.done
@@ -44,7 +44,7 @@ class App extends React.Component {
     removeTodoItem = (item) =>{
         const thisItems = this.state.items;
         console.log("old",thisItems)
-        const newItems = thisItems.filter((v)=> item.idx !== v.idx )
+        const newItems = thisItems.filter((v)=> item.id !== v.id )
         console.log("new",newItems)
         this.setState({items : newItems}, ()=>{
         });
@@ -52,6 +52,18 @@ class App extends React.Component {
 
     componentDidMount() {
         console.log("App","componentDidMount")   
+        const requestOptions = {
+            method : 'GET',
+            headers : {
+                "Content-Type" :  "application/json",
+            }
+        }
+        fetch("http://localhost:8080/service/todo", requestOptions)
+            .then( res =>res.json() )
+            .then( 
+                res => this.setState({items : res}),
+                error => this.setState({error : error })
+            )
     }
     componentDidUpdate(prevProps, prevState, snapshot){
         console.log("App","componentDidUpdate")   
