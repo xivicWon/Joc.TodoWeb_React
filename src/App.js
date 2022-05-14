@@ -4,66 +4,68 @@ import * as React from 'react';
 import Todo from "./Todo";
 import { List, Paper, Container } from '@mui/material';
 import AddTodo from "./AddTodo"
-
+import { call } from "./service/ApiService";
 // jsx => JavaScript eXtention ES6+ (ECMAScript 2015+)
 class App extends React.Component {
 
     constructor(props){
         super(props)
         this.state = { 
-            items :  [
-                // { idx : 1 , done : false , title : 'sample' },
-                // { idx : 2 , done : true , title : 'sample2' },
-                // { idx : 3 , done : true , title : 'sample3' },
-            ] 
+            items :  [] 
         }
     }
 
     addTodoItem = (item) =>{
-        const thisItems = this.state.items;
-        const newitem =  {
-            id : thisItems.length + 1,
-            title : item.title,
-            done : false
-        }
-        thisItems.push(newitem)
-        this.setState({items : thisItems})
+        call("/service/todo", "POST" , item)
+        .then(
+            res => { 
+                console.log("POST /service/todo", res)
+                this.setState({items : res})
+            },
+            error =>  {
+                // this.setState({error : error })
+            }
+        )
     }
 
     editTodoItem = (item) => { 
-        const thisItems = this.state.items;
-        thisItems.filter((v)=> item.id === v.id )
-            .forEach(v => { 
-                v.title = item.title
-                v.done = item.done
-            })
-
-        this.setState({items : thisItems});
+        call("/service/todo", "PUT" , item)
+        .then(
+            res => { 
+                console.log("PUT /service/todo", res)
+                this.setState({items : res})
+            },
+            error =>  {
+                // this.setState({error : error })
+            }
+        )
     }
 
     removeTodoItem = (item) =>{
-        const thisItems = this.state.items;
-        console.log("old",thisItems)
-        const newItems = thisItems.filter((v)=> item.id !== v.id )
-        console.log("new",newItems)
-        this.setState({items : newItems}, ()=>{
-        });
+        call("/service/todo", "DELETE" , item)
+        .then(
+            res => { 
+                console.log("DELETE /service/todo", res)
+                this.setState({items : res})
+            },
+            error =>  {
+                // this.setState({error : error })
+            }
+        )
     }
 
     componentDidMount() {
         console.log("App","componentDidMount")   
-        const requestOptions = {
-            method : 'GET',
-            headers : {
-                "Content-Type" :  "application/json",
+        call("/service/todo", "GET" , null)
+        .then(
+            res => { 
+                console.log("GET /service/todo", res)
+                this.setState({items : res})
+            },
+            error =>  {
+                // this.setState({error : error })
             }
-        }
-        fetch("http://localhost:8080/service/todo", requestOptions)
-            .then( res =>res.json() )
-            .then( 
-                res => this.setState({items : res}),
-                error => this.setState({error : error })
-            )
+        )
     }
     componentDidUpdate(prevProps, prevState, snapshot){
         console.log("App","componentDidUpdate")   
