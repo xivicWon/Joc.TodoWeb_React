@@ -8,6 +8,7 @@ class Todo extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            title : this.props.item.title,
             readOnly : true
         }
         this.editTodoItem = this.props.editTodoItem;
@@ -15,10 +16,7 @@ class Todo extends React.Component{
     }
 
     onChangeInput = e => {
-        const thisItem = this.props.item;
-        thisItem.title = e.target.value;
-        this.editTodoItem(thisItem);
-        // this.setState({item:thisItem})
+        this.setState({title:e.target.value})
     }
 
     onClickInput = () => {
@@ -28,6 +26,7 @@ class Todo extends React.Component{
     onPressEnter = e =>{
         const key = e.key  || e.keyCode;
         const {item} = this.props
+        item.title = this.state.title
         if( key === "Enter" || key === 13){
             this.editTodoItem(item);
             this.setState({readOnly:true})
@@ -40,7 +39,13 @@ class Todo extends React.Component{
         item.done = !item.done
         this.editTodoItem(item);
     }
-
+    onBlur = e => { 
+        console.log("onBlur")
+        const {item} = this.props
+        item.title = this.state.title
+        this.editTodoItem(item);
+        this.setState({readOnly:true})
+    }
     onDeleteTodo = e =>{
         const {item} = this.props;
         this.removeTodoItem(item);
@@ -51,7 +56,11 @@ class Todo extends React.Component{
     }
 
     componentDidUpdate(prevProps, prevState, snapShot){
-        console.log("Todo","componentDidUpdate")   
+        console.table("Todo","componentDidUpdate", prevProps, prevState , this.props, this.state, snapShot)   
+        // this.setState({title  : this.props.item.title})
+        if( prevProps.item.title !== this.props.item.title){
+            this.setState({title : this.props.item.title })
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext ){
@@ -60,7 +69,7 @@ class Todo extends React.Component{
     }
     render(){
         const {item} = this.props;
-        const {readOnly} = this.state;
+        const {readOnly ,title} = this.state;
         const checkboxId = "todo-" + item.id
         return (
             <ListItem>
@@ -74,11 +83,12 @@ class Todo extends React.Component{
                             type="text"
                             id={checkboxId}
                             name={checkboxId}
-                            value={item.title}
+                            value={title}
                             multiline={false}
                             fullWidth={true}
                             readOnly={readOnly}
                             onKeyUp={this.onPressEnter}
+                            onBlur={this.onBlur}
                             onChange={this.onChangeInput}
                             onClick={this.onClickInput}
                         />
